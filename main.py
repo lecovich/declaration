@@ -10,4 +10,4 @@ currency_date = datetime.fromisoformat(d[0]['date'].replace('Z', ''))
 for currency in currencies:
     if currency['code'] == 'USD':
         rate = currency['rate']
-        print(rate, currency_date.isoweekday())
+        print(f'{currency_date.date()}: {rate}')
