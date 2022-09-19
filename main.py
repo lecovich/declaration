@@ -1,21 +1,31 @@
 import json
 from datetime import datetime
 
-with open('input.json', 'r') as fp:
-    d = json.load(fp)
+from client import get_data
 
-currencies = d[0]['currencies']
-currency_date = datetime.fromisoformat(d[0]['date'].replace('Z', ''))
 
-result = {}
+def main():
+    status, d = get_data()
+    if status != 200:
+        print('Error', status)
+        return
 
-for currency in currencies:
-    if currency['code'] == 'USD':
-        rate = currency['rate']
-        result = {
-            'date': currency_date.isoformat(),
-            'rate': rate,
-        }
+    currencies = d[0]['currencies']
+    currency_date = datetime.fromisoformat(d[0]['date'].replace('Z', ''))
 
-with open('output.json', 'w') as fp:
-    json.dump(result, fp)
+    result = {}
+
+    for currency in currencies:
+        if currency['code'] == 'USD':
+            rate = currency['rate']
+            result = {
+                'date': currency_date.isoformat(),
+                'rate': rate,
+            }
+
+    with open('output.json', 'w') as fp:
+        json.dump(result, fp)
+
+
+if __name__ == '__main__':
+    main()
