@@ -1,20 +1,15 @@
-import http.client
-import json
+import requests
 
 HOST = 'nbg.gov.ge'
-PATH = 'gw/api/ct/monetarypolicy/currencies/en/json/?date=2022-09-19'
+PATH = 'gw/api/ct/monetarypolicy/currencies/en/json/?date=2022-09-20'
 
 
 def get_data():
-    connection = http.client.HTTPSConnection(HOST)
-    connection.request('GET', PATH)
-    response = connection.getresponse()
-    connection.close()
+    response = requests.get(f'https://{HOST}/{PATH}')
 
-    if response.status != 200:
-        return response.status, None
+    if response.status_code != 200:
+        return response.status_code, None
 
-    raw_data = response.read()
-    data = json.loads(raw_data)
+    data = response.json()
 
-    return response.status, data
+    return response.status_code, data
