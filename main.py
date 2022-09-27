@@ -1,11 +1,26 @@
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from client import get_data
 
 
 def main():
-    status, d = get_data()
+    while True:
+        try:
+            year = int(input('введите год: '))
+            month = int(input('введите месяц: '))
+            day = int(input('введите день: '))
+            s = date(year,month,day)
+        except ValueError:
+            print('введена  неправильная дата ')
+
+
+        else:
+
+            print('введена корректная дата')
+            break
+
+    status, d = get_data(s)
     if status != 200:
         print('Error', status)
         return
