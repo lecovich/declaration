@@ -5,18 +5,17 @@ from client import get_data
 
 
 def main():
+    
     while True:
         try:
             year = int(input('введите год: '))
             month = int(input('введите месяц: '))
             day = int(input('введите день: '))
-            s = date(year,month,day)
+            money = int(input('введите количество денег: '))
+            s = date(year, month, day)
         except ValueError:
             print('введена  неправильная дата ')
-
-
         else:
-
             print('введена корректная дата')
             break
 
@@ -33,9 +32,11 @@ def main():
     for currency in currencies:
         if currency['code'] == 'USD':
             rate = currency['rate']
+            result_money = money * rate
             result = {
                 'date': currency_date.isoformat(),
                 'rate': rate,
+                'result_money': result_money,
             }
 
     with open('output.json', 'w') as fp:
