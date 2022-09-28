@@ -4,22 +4,30 @@ from datetime import datetime, date
 from client import get_data
 
 
-def main():
-
+def get_user_input_as_int(prompt):
     while True:
         try:
-            year = int(input('введите год: '))
-            month = int(input('введите месяц: '))
-            day = int(input('введите день: '))
-            amount = int(input('введите количество денег: '))
-            s = date(year, month, day)
+            return int(input(prompt))
         except ValueError:
-            print('введена  неправильная дата ')
+            print('Invalid number, try again')
+
+
+def main():
+    while True:
+        year = get_user_input_as_int('Enter year: ')
+        month = get_user_input_as_int('Enter month: ')
+        day = get_user_input_as_int('Ender day: ')
+
+        try:
+            current_date = date(year, month, day)
+        except ValueError:
+            print('Invalid date, try again from the very beginning')
         else:
-            print('введена корректная дата')
             break
 
-    status, d = get_data(s)
+    amount = get_user_input_as_int('Enter amount: ')
+
+    status, d = get_data(current_date)
     if status != 200:
         print('Error', status)
         return
