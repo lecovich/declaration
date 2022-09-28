@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, date
+from datetime import date
 
 from client import get_data
 
@@ -13,38 +13,41 @@ def get_user_input_as_int(prompt):
 
 
 def main():
+    result = []
+
     while True:
-        year = get_user_input_as_int('Enter year: ')
-        month = get_user_input_as_int('Enter month: ')
-        day = get_user_input_as_int('Ender day: ')
+        while True:
+            year = get_user_input_as_int('Enter year: ')
+            month = get_user_input_as_int('Enter month: ')
+            day = get_user_input_as_int('Ender day: ')
 
-        try:
-            current_date = date(year, month, day)
-        except ValueError:
-            print('Invalid date, try again from the very beginning')
-        else:
+            try:
+                current_date = date(year, month, day)
+            except ValueError:
+                print('Invalid date, try again from the very beginning')
+            else:
+                break
+
+        amount = get_user_input_as_int('Enter amount: ')
+
+        status, d = get_data(current_date)
+        if status != 200:
+            print('Error', status)
+            return
+
+        currencies = d[0]['currencies']
+
+        for currency in currencies:
+            if currency['code'] == 'USD':
+                result.append({
+                    'date': currency['date'],
+                    'rate': currency['rate'],
+                    'resultAmount': amount * currency['rate'],
+                })
+
+        user_prompt = input('Do you want to add one more date? [Y/n]')
+        if user_prompt == 'n':
             break
-
-    amount = get_user_input_as_int('Enter amount: ')
-
-    status, d = get_data(current_date)
-    if status != 200:
-        print('Error', status)
-        return
-
-    currencies = d[0]['currencies']
-    currency_date = datetime.fromisoformat(d[0]['date'].replace('Z', ''))
-
-    result = {}
-
-    for currency in currencies:
-        if currency['code'] == 'USD':
-            rate = currency['rate']
-            result = {
-                'date': currency_date.isoformat(),
-                'rate': rate,
-                'resultAmount': amount * rate,
-            }
 
     with open('output.json', 'w') as fp:
         json.dump(result, fp)
