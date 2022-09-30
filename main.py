@@ -25,8 +25,8 @@ def print_result(value):
         overall_result_amount += item['resultAmount']
 
     print('\n')
-    print(f'{"Overall amount"}\t{round(overall_amount,2)}\t\t\t\t\t\t\t\t{round(overall_result_amount,2)}')
-    
+    print('Overall amount, USD:', overall_amount)
+    print('Overall amount, GEL:', overall_result_amount)
 
 
 def main():
