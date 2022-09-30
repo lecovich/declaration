@@ -1,45 +1,73 @@
-import json
-from datetime import datetime, date
+from datetime import date
 
 from client import get_data
 
 
-def main():
-
+def get_user_input_as_int(prompt):
     while True:
         try:
-            year = int(input('введите год: '))
-            month = int(input('введите месяц: '))
-            day = int(input('введите день: '))
-            amount = int(input('введите количество денег: '))
-            s = date(year, month, day)
+            return int(input(prompt))
         except ValueError:
-            print('введена  неправильная дата ')
-        else:
-            print('введена корректная дата')
+            print('Invalid number, try again')
+
+
+def print_result(value):
+    overall_amount = 0
+    overall_result_amount = 0
+
+    print('\nDate\t\t\tAmount, USD\t\tRate\t\t\tAmount, GEL')
+
+    for item in value:
+        current_date = item['date'].split('T')[0]
+        print(f'{current_date}\t\t{item["amount"]}\t\t\t\t{item["rate"]}\t\t\t{item["resultAmount"]}')
+
+        overall_amount += item['amount']
+        overall_result_amount += item['resultAmount']
+
+    print('\n')
+    print(f'{"Overall amount"}\t{round(overall_amount,2)}\t\t\t\t\t\t\t\t{round(overall_result_amount,2)}')
+    
+
+
+def main():
+    result = []
+
+    while True:
+        while True:
+            year = get_user_input_as_int('Enter year: ')
+            month = get_user_input_as_int('Enter month: ')
+            day = get_user_input_as_int('Ender day: ')
+
+            try:
+                current_date = date(year, month, day)
+            except ValueError:
+                print('Invalid date, try again from the very beginning')
+            else:
+                break
+
+        amount = get_user_input_as_int('Enter amount: ')
+
+        status, d = get_data(current_date)
+        if status != 200:
+            print('Error', status)
+            return
+
+        currencies = d[0]['currencies']
+
+        for currency in currencies:
+            if currency['code'] == 'USD':
+                result.append({
+                    'date': currency['date'],
+                    'rate': currency['rate'],
+                    'resultAmount': amount * currency['rate'],
+                    'amount': amount,
+                })
+
+        user_prompt = input('Do you want to add one more date? [Y/n] ')
+        if user_prompt == 'n':
             break
 
-    status, d = get_data(s)
-    if status != 200:
-        print('Error', status)
-        return
-
-    currencies = d[0]['currencies']
-    currency_date = datetime.fromisoformat(d[0]['date'].replace('Z', ''))
-
-    result = {}
-
-    for currency in currencies:
-        if currency['code'] == 'USD':
-            rate = currency['rate']
-            result = {
-                'date': currency_date.isoformat(),
-                'rate': rate,
-                'resultAmount': amount * rate,
-            }
-
-    with open('output.json', 'w') as fp:
-        json.dump(result, fp)
+    print_result(result)
 
 
 if __name__ == '__main__':
