@@ -1,3 +1,4 @@
+import json
 from datetime import date
 
 from client import get_data
@@ -66,6 +67,11 @@ def main():
             break
 
     print_result(result)
+
+    user_prompt = input('Do you want to add result in file?  [Y/n] ')
+    if user_prompt in ('Y', ''):
+        with open('output.json', 'w') as fp:
+            json.dump(result, fp)
 
 
 if __name__ == '__main__':
