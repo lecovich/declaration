@@ -26,10 +26,19 @@ def print_result(value):
         overall_result_amount += item['resultAmount']
 
     print('\n')
-    print(f'{"Overall amount"}\t{round(overall_amount,2)}\t\t\t\t\t\t\t\t{round(overall_result_amount,2)}')
+    print(f'{"Overall amount"}\t{round(overall_amount, 2)}\t\t\t\t\t\t\t\t{round(overall_result_amount, 2)}')
+
 
 def main():
-    result = []
+    new_add_user_prompt = input('Do you want to read file with result? [Y/n] ')
+    if new_add_user_prompt in ('Y', ''):
+        try:
+            with open('output.json', 'r') as fp:
+                result = json.load(fp)
+        except FileNotFoundError:
+            result = []
+    else:
+        result = []
 
     while True:
         while True:
